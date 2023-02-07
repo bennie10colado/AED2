@@ -179,7 +179,7 @@ int main(){
             \
              9
 */
-    Node *root = NULL;
+    Node *root = treeInitialize();
 
     root = insertNode(root, 10);
     insertNode(root, 15);
