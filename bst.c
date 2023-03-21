@@ -2,7 +2,7 @@
 #include <string.h>
 #include "bst.h"
 
-void elementPrintBST(Node_bst root) {
+void elementPrintBST(Node_bst root){
     printf("[%s] ", root->data->name_student);
 }
 
@@ -36,7 +36,7 @@ Node_bst treeSearchBST(Node_bst root, char* nome){
         if (strcmp(nome, root->data->name_student) == 0)
             return root;
         else{
-            if (strcmpi(nome, root->data->name_student) > 0)
+            if (strcmp(nome, root->data->name_student) > 0)
                 return treeSearchBST(root->right, nome);
             else
                 return treeSearchBST(root->left, nome);

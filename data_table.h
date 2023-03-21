@@ -19,7 +19,7 @@ typedef struct table{
     Node_bst indexBST;
 }Table;
 
-int getline(char **lineptr, size_t *n, FILE *stream);
+//int getline(char **lineptr, size_t *n, FILE *stream);
 
 
 int initializeTable(Table *tab);
@@ -31,7 +31,7 @@ Student *searchStudent(Table *tab, char *name_searched);
 Student *readData();
 void saveFileAuxBST(Node_bst root, FILE *arq);
 void saveFileBST(Node_bst root, char* nome);
-Node_bst loadingFileBST(Node_bst root, char *nome);
+void loadingFileBST(Node_bst root, char *nome) ;
 Node_bst loadingFileBST2(Node_bst root, char *nome);
 
 
@@ -40,7 +40,7 @@ void printElement(Node_bst root, Table *tab);
 void preorderPrintTable(Node_bst root, Table *tab);
 void inorderPrintTable(Node_bst root, Table *tab);
 void postorderPrintTable(Node_bst root, Table *tab);
-
+void printStudents(Table *tab);
 
 
 
