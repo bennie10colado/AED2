@@ -19,14 +19,12 @@ typedef struct table{
     Node_bst indexBST;
 }Table;
 
-//int getline(char **lineptr, size_t *n, FILE *stream);
-
-
 int initializeTable(Table *tab);
 void finishTable(Table *tab);
 
 void addStudent(Table *tab, Student *student);
 Student *searchStudent(Table *tab, char *name_searched);
+Student *searchStudent2(Table *tab, char *name_searched);
 
 Student *readData();
 void saveFileAuxBST(Node_bst root, FILE *arq);

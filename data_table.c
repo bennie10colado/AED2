@@ -76,7 +76,7 @@ Node_bst loadingFileBST2(Node_bst root, char *nome){
         }
         fclose(arq);
     }else{
-        printf("\n\t--> ERRO ao abrir arquivo!\n");
+        printf("\nERRO ao abrir arquivo!\n");
     }
     return root;
 }
@@ -109,14 +109,73 @@ void loadingFileBST(Node_bst root, char *nome) {
         free(temp);
     }
     free(linha);
-    //return root;
+}
+
+void loadingFileBST3(Node_bst root, char *nome) {
+    FILE *arq;
+    size_t len = 50;
+    char *linha = malloc(len);
+    char delim[] = "|";
+    Data_type temp;
+
+    arq = fopen(nome, "r+");
+    if(arq != NULL){
+        temp = (Data_type) malloc(sizeof(*temp));
+        while(getdelim(&linha, &len, '\n', arq)> 0){ //separa, e quando nao houver mais o que separar retorna -1
+            char *var = linha;
+            char *ptr = strtok(var, "|");
+
+            temp->index = atoi(ptr);
+            ptr = strtok(NULL, "|");
+            //free(temp->name_student);
+            //temp->name_student = (char *) malloc(strlen(ptr) + 1);
+            //strcpy(temp->name_student, ptr);
+            deleteNewline(ptr);
+
+            root = insertNodeBST(root, temp);
+        }
+        fclose(arq);
+        free(temp->name_student);
+        free(temp);
+    }
+    free(linha);
+}
+
+void loadingFileBST4(Node_bst root, char *nome) {
+    FILE *arq;
+    arq = fopen(nome, "r+");
+    size_t len = 50;
+    char *linha = malloc(len);
+    char delim[] = "|";
+    Data_type temp;
+
+    if(arq != NULL){
+        temp = (Data_type) malloc(sizeof(*temp));
+        while(getline(&linha, &len, arq) > 0){ //separa, e quando nao houver mais o que separar retorna -1
+            char *var = linha;
+            char *ptr = strtok(var, delim);
+
+            temp->index = atoi(ptr);
+            ptr = strtok(NULL, delim);
+            free(temp->name_student);
+            temp->name_student = (char *) malloc(strlen(ptr) + 1);
+            strcpy(temp->name_student, ptr);
+            deleteNewline(ptr);
+
+            root = insertNodeBST(root, temp);
+        }
+        fclose(arq);
+        free(temp->name_student);
+        free(temp);
+    }
+    free(linha);
 }
 
 int initializeTable(Table *tab){
     initializeNodeBST(&tab->indexBST);
     tab->arcData = fopen("dataBST.dat", "a+");
     //tab->indexBST = loadingFileBST(tab->indexBST, "indexBST.dat");
-    loadingFileBST(tab->indexBST, "indexBST.dat");
+    loadingFileBST3(tab->indexBST, "indexBST.dat");
 
 
     if(tab->arcData != NULL)
@@ -167,7 +226,6 @@ void postorderPrintTable(Node_bst root, Table *tab){
 }
 
 
-
 void addStudent(Table *tab, Student *student){
     int positionNewReg;
     if(tab->arcData != NULL){
@@ -185,15 +243,16 @@ void addStudent(Table *tab, Student *student){
 
         fprintf(tab->arcData, "%s|%s|%f|%d|%d\n", student->name,student->course, student->finalGrade, student->age, student->enrollmentCode);
     }
+    //saveFileBST(tab->indexBST, "indexBST.dat");
+    //printf("O aluno foi salvo em indexBST.\n");
 }
 
-
-Student *searchStudent(Table *tab, char *name_searched){
+Student *searchStudent2(Table *tab, char *name_searched){
     if(tab->arcData != NULL){
         node_bst *temp;
         temp = tab->indexBST;
         while (temp != NULL){
-            if(temp->data->name_student == name_searched){
+            if(strcmp( temp->data->name_student, name_searched) == 0){
                 fseek(tab->arcData, temp->data->index, SEEK_SET);
 
                 Student *wanted = (Student*) malloc(sizeof(Student));
@@ -211,11 +270,40 @@ Student *searchStudent(Table *tab, char *name_searched){
     return NULL;
 }
 
-void printStudents(Table *tab){
-    Student *temp = (Student *)malloc(sizeof(Student));
-    fseek(tab->arcData, 0, SEEK_SET);
-    while(fread(temp, sizeof(Student), 1, tab->arcData) != 0){
-        printf("Name: %s, Course: %s, Final Grade: %.2f, Age: %d, Enrollment Code: %d.", temp->name, temp->course, temp->finalGrade, temp->age, temp->enrollmentCode);
+Student *searchStudent(Table *tab, char *name_searched){
+    if(tab->arcData != NULL){
+        node_bst *temp = tab->indexBST;
+        
+        while (temp != NULL){
+            int comparation = strcmp(name_searched, temp->data->name_student);
+            if(comparation == 0){
+                fseek(tab->arcData, temp->data->index, SEEK_SET);
+
+                Student *wanted = (Student*) malloc(sizeof(Student));
+                if(wanted == NULL){
+                    fprintf(stderr, "erro de alocação de memória.\n");
+                    return NULL;
+                }
+
+                size_t num_items_read = fread(wanted, sizeof(Student), 1, tab->arcData);
+                if(num_items_read != 1){
+                    fprintf(stderr, "erro de leitura do arquivo.\n");
+                    free(wanted);
+                    return NULL;
+                }
+                printf("estudante encontrado pelo nome: %s\n", wanted->name);
+                return wanted;
+            }else{
+                if(comparation >= 0){
+                    temp = temp->right;
+                }else{
+                    temp = temp->left;
+                }
+            }
+        }
+        printf("\nteste.\n");
     }
-    free(temp);
+    return NULL;
 }
+
+
